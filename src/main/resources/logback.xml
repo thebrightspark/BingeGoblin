@@ -1,0 +1,30 @@
+<configuration>
+    <conversionRule conversionWord="hl" converterClass="brightspark.logback.HighlightConverter"/>
+    <variable name="LOG_PATTERN" value="%d [%-5level] [%thread] [%logger{36}] %msg%n"/>
+    <timestamp key="timestamp" datePattern="yyyy_MM_dd-HH_mm"/>
+
+    <appender name="Console" class="ch.qos.logback.core.ConsoleAppender">
+        <encoder>
+            <pattern>%hl(${LOG_PATTERN})</pattern>
+        </encoder>
+    </appender>
+
+    <appender name="File" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <file>logs/bingegoblin.log</file>
+        <encoder>
+            <pattern>${LOG_PATTERN}</pattern>
+        </encoder>
+        <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+            <fileNamePattern>logs/bingegoblin-%d{yyyy_MM_dd-HH}.log</fileNamePattern>
+            <maxHistory>30</maxHistory>
+            <totalSizeCap>1GB</totalSizeCap>
+        </rollingPolicy>
+    </appender>
+
+    <logger name="brightspark" level="DEBUG"/>
+
+    <root level="INFO">
+<!--        <appender-ref ref="Console"/>-->
+        <appender-ref ref="File"/>
+    </root>
+</configuration>
