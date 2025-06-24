@@ -217,7 +217,7 @@ object TwitchStreamListener : BaseExtension("twitch-stream-listener") {
 	}
 
 	private val Stream.url: String
-		get() = "https://twitch.tv/${this.userName}"
+		get() = "https://twitch.tv/${this.userLogin}"
 
 	class EnabledArgs : Arguments() {
 		val enabled: Boolean by boolean {
