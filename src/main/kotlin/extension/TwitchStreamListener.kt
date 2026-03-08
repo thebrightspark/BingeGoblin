@@ -110,7 +110,7 @@ object TwitchStreamListener : BaseExtension("twitch-stream-listener") {
 		log.info { "Setting up Twitch stream polling task..." }
 		pollStreamsTask?.cancel()
 		scheduler.schedule(
-			delay = Properties.Companion.instance.twitch.pollIntervalDuration,
+			delay = Properties.instance.twitch.pollIntervalDuration,
 			repeat = true,
 			callback = ::pollStreams
 		)
@@ -121,7 +121,7 @@ object TwitchStreamListener : BaseExtension("twitch-stream-listener") {
 			log.debug { "Not finding Twitch streams - disabled" }
 			return
 		}
-		if (Storage.CHANNEL_ID.get() == Snowflake.Companion.min) {
+		if (Storage.CHANNEL_ID.get() == Snowflake.min) {
 			log.debug { "Not finding Twitch streams - no channel set" }
 			return
 		}

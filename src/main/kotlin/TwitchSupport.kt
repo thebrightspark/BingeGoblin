@@ -17,11 +17,13 @@ import io.ktor.client.request.*
 import io.ktor.client.request.forms.*
 import io.ktor.http.*
 import io.ktor.serialization.jackson.*
-import kotlinx.datetime.Clock
-import kotlinx.datetime.Instant
+import kotlin.time.Clock
 import kotlin.time.Duration.Companion.seconds
+import kotlin.time.ExperimentalTime
+import kotlin.time.Instant
 import kotlin.time.measureTimedValue
 
+@OptIn(ExperimentalTime::class)
 object TwitchSupport {
 	private val log = KotlinLogging.logger {}
 	private val httpClient = HttpClient(CIO) {
@@ -30,16 +32,16 @@ object TwitchSupport {
 		}
 	}
 	private val twitchClient: TwitchHelix = TwitchHelixBuilder.builder()
-		.withClientId(Properties.Companion.instance.twitch.clientId)
-		.withClientSecret(Properties.Companion.instance.twitch.clientSecret)
+		.withClientId(Properties.instance.twitch.clientId)
+		.withClientSecret(Properties.instance.twitch.clientSecret)
 		.build()
 	private var token: String = ""
-	private var tokenExpiry: Instant = Instant.Companion.DISTANT_PAST
+	private var tokenExpiry: Instant = Instant.DISTANT_PAST
 
 	private suspend fun requestToken(): TokenResponse = httpClient.post("https://id.twitch.tv/oauth2/token") {
 		setBody(FormDataContent(parameters {
-			append("client_id", Properties.Companion.instance.twitch.clientId)
-			append("client_secret", Properties.Companion.instance.twitch.clientSecret)
+			append("client_id", Properties.instance.twitch.clientId)
+			append("client_secret", Properties.instance.twitch.clientSecret)
 			append("grant_type", "client_credentials")
 		}))
 	}.let {

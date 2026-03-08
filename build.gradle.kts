@@ -1,8 +1,10 @@
 import dev.kordex.gradle.plugins.kordex.DataCollection
 
 plugins {
-	kotlin("jvm") version "2.1.0"
-	id("dev.kordex.gradle.kordex") version "1.7.0"
+	kotlin("jvm") version libs.versions.kotlin
+	alias(libs.plugins.kordex)
+	alias(libs.plugins.kordex.i18n)
+	`maven-publish`
 }
 
 group = "brightspark"
@@ -18,10 +20,10 @@ kordEx {
 		voice = false
 		dataCollection(DataCollection.Minimal)
 	}
-	i18n {
-		classPackage = "i18n"
-		translationBundle = "bingegoblin.strings"
-	}
+}
+
+i18n {
+	bundle("bingegoblin.strings", "i18n")
 }
 
 repositories {
@@ -29,18 +31,34 @@ repositories {
 }
 
 dependencies {
-	implementation("com.github.twitch4j:twitch4j-helix:1.24.0")
+	implementation(libs.twitch4j)
+	implementation(libs.ktor.client.core)
+	implementation(libs.ktor.client.cio)
+	implementation(libs.ktor.client.contentnegotiation)
+	implementation(libs.ktor.serialization.jackson)
+	implementation(libs.jackson.dataformat.yaml)
+	implementation(libs.jackson.dataformat.properties)
+	implementation(libs.jackson.module.kotlin)
+	implementation(libs.logback)
+}
 
-	val ktorVersion = "3.1.3"
-	implementation("io.ktor:ktor-client-core:$ktorVersion")
-	implementation("io.ktor:ktor-client-cio:$ktorVersion")
-	implementation("io.ktor:ktor-client-content-negotiation:$ktorVersion")
-	implementation("io.ktor:ktor-serialization-jackson:$ktorVersion")
-
-	val jacksonVersion = "2.19.0"
-	implementation("com.fasterxml.jackson.dataformat:jackson-dataformat-yaml:$jacksonVersion")
-	implementation("com.fasterxml.jackson.dataformat:jackson-dataformat-properties:$jacksonVersion")
-	implementation("com.fasterxml.jackson.module:jackson-module-kotlin:$jacksonVersion")
-
-	implementation("ch.qos.logback:logback-classic:1.5.18")
+publishing {
+	publications {
+		create<MavenPublication>("bingegoblin") {
+			from(components["java"])
+		}
+	}
+//	repositories {
+//		maven {
+//			name = "GitLab"
+//			url = uri("https://gitlab.com/api/v4/projects/${System.getenv("CI_PROJECT_ID")}/packages/maven")
+//			credentials(HttpHeaderCredentials::class) {
+//				name = "Job-Token"
+//				value = System.getenv("CI_JOB_TOKEN")
+//			}
+//			authentication {
+//				create<HttpHeaderAuthentication>("header")
+//			}
+//		}
+//	}
 }

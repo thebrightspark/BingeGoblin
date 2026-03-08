@@ -1,0 +1,24 @@
+[versions]
+kotlin = "2.2.21"
+twitch4j = "1.26.0"
+ktor = "3.4.1"
+jackson = "2.21.0" # Version used by Twitch4j
+logback = "1.5.32"
+
+kordex-plugin = "1.9.0"
+kordex-i18n-plugin = "1.1.1"
+
+[libraries]
+twitch4j = { module = "com.github.twitch4j:twitch4j-helix", version.ref = "twitch4j" }
+ktor-client-core = { module = "io.ktor:ktor-client-core", version.ref = "ktor" }
+ktor-client-cio = { module = "io.ktor:ktor-client-cio", version.ref = "ktor" }
+ktor-client-contentnegotiation = { module = "io.ktor:ktor-client-content-negotiation", version.ref = "ktor" }
+ktor-serialization-jackson = { module = "io.ktor:ktor-serialization-jackson", version.ref = "ktor" }
+jackson-dataformat-yaml = { module = "com.fasterxml.jackson.dataformat:jackson-dataformat-yaml", version.ref = "jackson" }
+jackson-dataformat-properties = { module = "com.fasterxml.jackson.dataformat:jackson-dataformat-properties", version.ref = "jackson" }
+jackson-module-kotlin = { module = "com.fasterxml.jackson.module:jackson-module-kotlin", version.ref = "jackson" }
+logback = { module = "ch.qos.logback:logback-classic", version.ref = "logback" }
+
+[plugins]
+kordex = { id = "dev.kordex.gradle.kordex", version.ref = "kordex-plugin" }
+kordex-i18n = { id = "dev.kordex.gradle.i18n", version.ref = "kordex-i18n-plugin" }
