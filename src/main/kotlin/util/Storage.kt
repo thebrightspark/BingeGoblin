@@ -1,7 +1,6 @@
 package brightspark.util
 
 import dev.kord.common.entity.Snowflake
-import dev.kordex.core.utils.splitOn
 import io.github.oshai.kotlinlogging.KotlinLogging
 import java.nio.file.Files
 import java.nio.file.Paths
@@ -53,7 +52,7 @@ object Storage {
 				emptyMap()
 			else
 				mapString.split(',')
-					.associate { v -> v.splitOn { it == ':' }.let { it.first to Snowflake(it.second) } }
+					.associate { v -> v.split(':', limit = 2).let { it[0] to Snowflake(it[1]) } }
 		}
 	)
 
