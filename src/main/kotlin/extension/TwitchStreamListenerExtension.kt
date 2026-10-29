@@ -41,12 +41,27 @@ class TwitchStreamListenerExtension : BaseExtension("twitch-stream-listener") {
 	private val gameToChannel = mutableMapOf<String, Snowflake>()
 	private var liveStreams: HashSet<String> = HashSet()
 
-	private fun findGameId(value: String): String? = gameCache.values.find { it.name == value }?.id
+	fun cacheGame(game: Game) {
+		gameCache[game.id] = GameInfo(game.id, game.name, game.getBoxArtUrl(288, 384))
+		log.info { "Cached game ${game.name} (${game.id})" }
+	}
 
 	override suspend fun setup() {
 		setupPollStreamsTask()
 		gameToChannel.clear()
 		gameToChannel.putAll(Storage.GAME_TO_CHANNEL_LIST.get())
+		if (gameToChannel.isNotEmpty()) {
+			log.info { "Caching configured games..." }
+			gameToChannel.keys.forEach { gameId ->
+				val game = try {
+					TwitchSupport.getGameById(gameId)
+				} catch (e: Exception) {
+					log.error(e) { "Error getting game by ID $gameId" }
+					null
+				}
+				game?.let { cacheGame(it) }
+			}
+		}
 
 		ephemeralSlashCommand(::EnabledArgs) {
 			name = Translations.Command.Enabled.name
@@ -90,7 +105,7 @@ class TwitchStreamListenerExtension : BaseExtension("twitch-stream-listener") {
 				val gameName = arguments.gameName
 				val channel = arguments.channel
 				getGame(gameName)?.let { game ->
-					gameCache[game.id] = GameInfo(game.id, game.name, game.getBoxArtUrl(288, 384))
+					cacheGame(game)
 					gameToChannel[game.id] = channel.id
 					Storage.GAME_TO_CHANNEL_LIST.set(gameToChannel)
 

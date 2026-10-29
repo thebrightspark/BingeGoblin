@@ -65,6 +65,10 @@ object TwitchSupport {
 		return token
 	}
 
+	suspend fun getGameById(gameId: String): Game? = handleRequest("getGameById") {
+		twitchClient.getGames(getToken(), listOf(gameId), null, null).execute().games.firstOrNull()
+	}
+
 	@Throws(Exception::class)
 	suspend fun getGamesByName(gameName: String): List<Game> = handleRequest("getGamesByName") {
 		twitchClient.getGames(getToken(), null, listOf(gameName), null).execute().games
