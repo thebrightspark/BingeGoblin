@@ -63,6 +63,24 @@ class TwitchStreamListenerExtension : BaseExtension("twitch-stream-listener") {
 			}
 		}
 
+		ephemeralSlashCommand {
+			name = Translations.Command.ListGames.name
+			description = Translations.Command.ListGames.desc
+			userNeedsModeratorPermission()
+
+			action {
+				if (gameToChannel.isEmpty())
+					respondSimple("No games are configured", DISCORD_YELLOW)
+				else {
+					val gamesString = gameToChannel.entries
+						.map { gameCache[it.key]!!.name to getGuild()!!.getChannel(it.value).mention }
+						.sortedBy { it.first }
+						.joinToString("\n") { "`${it.first}` -> ${it.second}" }
+					respondSimple(gamesString, DISCORD_GREEN)
+				}
+			}
+		}
+
 		ephemeralSlashCommand(::AddGameArgs) {
 			name = Translations.Command.AddGame.name
 			description = Translations.Command.AddGame.desc
@@ -80,6 +98,31 @@ class TwitchStreamListenerExtension : BaseExtension("twitch-stream-listener") {
 					liveStreams.clear()
 					respondSimple("Added ${game.name} streams to ${channel.mention}", DISCORD_GREEN)
 				}
+			}
+		}
+
+		ephemeralSlashCommand(::RemoveGameArgs) {
+			name = Translations.Command.RemoveGame.name
+			description = Translations.Command.RemoveGame.desc
+			userNeedsModeratorPermission()
+
+			action {
+				val gameName = arguments.gameName
+				val gameId = gameCache.values.find { it.name == gameName }?.id
+				if (!gameToChannel.containsKey(gameId)) {
+					respondSimple(
+						"No game found with that name.\nYou can use the command `/${Translations.Command.ListGames.name}` to check what is configured.",
+						DISCORD_YELLOW
+					)
+					return@action
+				}
+
+				gameCache.remove(gameId)
+				val channel = gameToChannel.remove(gameId)
+					?.let { getGuild()!!.getChannel(it).asChannelOf<TextChannel>().mention }
+				Storage.GAME_TO_CHANNEL_LIST.set(gameToChannel)
+
+				respondSimple("Removed $gameName streams from $channel", DISCORD_GREEN)
 			}
 		}
 
@@ -267,6 +310,13 @@ class TwitchStreamListenerExtension : BaseExtension("twitch-stream-listener") {
 			name = Translations.Command.AddGame.Arg.Channel.name
 			description = Translations.Command.AddGame.Arg.Channel.desc
 			requireChannelType(ChannelType.GuildText)
+		}
+	}
+
+	class RemoveGameArgs : Arguments() {
+		val gameName: String by string {
+			name = Translations.Command.RemoveGame.Arg.Game.name
+			description = Translations.Command.RemoveGame.Arg.Game.desc
 		}
 	}
 

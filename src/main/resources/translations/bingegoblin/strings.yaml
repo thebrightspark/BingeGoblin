@@ -6,6 +6,9 @@ command:
       enabled:
         name: enabled
         desc: True or false
+  list-games:
+    name: list-games
+    desc: Lists the games configure and the channels their streams will be sent to
   add-game:
     name: add-game
     desc: Adds a game to search streams for and sends them to the given channel
@@ -19,6 +22,10 @@ command:
   remove-game:
     name: remove-game
     desc: Removes a game to search streams for
+    arg:
+      game:
+        name: game
+        desc: The game to remove
   clear-games:
     name: clear-games
     desc: Removes all games
