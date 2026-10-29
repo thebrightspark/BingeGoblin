@@ -24,7 +24,7 @@
     <logger name="brightspark" level="DEBUG"/>
 
     <root level="INFO">
-<!--        <appender-ref ref="Console"/>-->
-        <appender-ref ref="File"/>
+        <appender-ref ref="Console"/>
+<!--        <appender-ref ref="File"/>-->
     </root>
 </configuration>

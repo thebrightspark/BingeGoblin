@@ -1,4 +1,5 @@
 import dev.kordex.gradle.plugins.kordex.DataCollection
+import dev.kordex.i18n.files.YamlFormat
 
 plugins {
 	kotlin("jvm") version libs.versions.kotlin
@@ -23,6 +24,10 @@ kordEx {
 }
 
 i18n {
+	defaults {
+		fileFormat = YamlFormat
+	}
+
 	bundle("bingegoblin.strings", "i18n")
 }
 

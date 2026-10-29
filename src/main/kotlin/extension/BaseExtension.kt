@@ -4,16 +4,15 @@ import brightspark.util.Properties
 import dev.kord.common.Color
 import dev.kord.common.entity.Permission
 import dev.kord.core.entity.Guild
-import dev.kord.core.entity.interaction.followup.PublicFollowupMessage
+import dev.kord.core.entity.interaction.followup.EphemeralFollowupMessage
 import dev.kord.gateway.Intent
 import dev.kord.rest.builder.message.embed
 import dev.kordex.core.DISCORD_BLACK
-import dev.kordex.core.annotations.NotTranslated
 import dev.kordex.core.checks.guildFor
 import dev.kordex.core.checks.types.CheckContext
 import dev.kordex.core.commands.application.ApplicationCommand
 import dev.kordex.core.extensions.Extension
-import dev.kordex.core.types.PublicInteractionContext
+import dev.kordex.core.types.EphemeralInteractionContext
 import dev.kordex.core.utils.hasPermissions
 import i18n.Translations
 import java.time.Instant
@@ -26,7 +25,6 @@ abstract class BaseExtension(override val name: String) : Extension() {
 	/**
 	 * Fail if the bot does not have the permissions
 	 */
-	@OptIn(NotTranslated::class)
 	protected suspend fun CheckContext<*>.botHasPermissions(vararg permissions: Permission) {
 		failIfNot(Translations.Error.Bot.permission.withOrdinalPlaceholders(permissions, permissions.joinToString())) {
 			guildFor(event)?.getMemberOrNull(kord.selfId)?.hasPermissions(*permissions) ?: false
@@ -43,10 +41,10 @@ abstract class BaseExtension(override val name: String) : Extension() {
 
 	protected suspend fun getGuild(): Guild = kord.getGuild(Properties.instance.discord.guildIdSnowflake)
 
-	protected suspend fun PublicInteractionContext.respondSimple(
+	protected suspend fun EphemeralInteractionContext.respondSimple(
 		message: String,
 		color: Color = DISCORD_BLACK
-	): PublicFollowupMessage = respond {
+	): EphemeralFollowupMessage = respond {
 		embed {
 			this.color = color
 			description = message

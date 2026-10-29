@@ -1,12 +1,12 @@
 [versions]
-kotlin = "2.2.21"
-twitch4j = "1.26.0"
-ktor = "3.4.1"
-jackson = "2.21.0" # Version used by Twitch4j
-logback = "1.5.32"
+kotlin = "2.3.10" # https://github.com/JetBrains/kotlin/releases
+twitch4j = "1.27.0" # https://github.com/twitch4j/twitch4j/releases
+ktor = "3.6.0" # https://github.com/ktorio/ktor/releases
+jackson = "2.22.2" # Version used by Twitch4j
+logback = "1.6.6" # https://mvnrepository.com/artifact/ch.qos.logback/logback-classic
 
-kordex-plugin = "1.9.0"
-kordex-i18n-plugin = "1.1.1"
+kordex-plugin = "1.9.2" # https://docs.kordex.dev/bots/gradle-plugin/
+kordex-i18n-plugin = "1.1.1" # https://docs.kordex.dev/i18n/getting-started
 
 [libraries]
 twitch4j = { module = "com.github.twitch4j:twitch4j-helix", version.ref = "twitch4j" }

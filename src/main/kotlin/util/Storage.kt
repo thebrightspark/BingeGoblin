@@ -1,6 +1,7 @@
 package brightspark.util
 
 import dev.kord.common.entity.Snowflake
+import dev.kordex.core.utils.splitOn
 import io.github.oshai.kotlinlogging.KotlinLogging
 import java.nio.file.Files
 import java.nio.file.Paths
@@ -14,9 +15,7 @@ object Storage {
 	private val store: MutableMap<StoreKey<out Any>, String> = mutableMapOf()
 
 	val TWITCH_ENABLED = StoreKey("TwitchEnabled", BoolStoreType, false)
-	val CHANNEL_ID = StoreKey("ChannelId", SnowflakeStoreType, Snowflake.min)
-	val GAME_NAME = StoreKey("TwitchGameName", StringStoreType, "")
-	val GAME_ID = StoreKey("TwitchGameId", StringStoreType, "")
+	val GAME_TO_CHANNEL_LIST = StoreKey("GameToChannelList", GameToChannelPairListStoreType, emptyMap())
 
 	init {
 		readStore()
@@ -42,9 +41,21 @@ object Storage {
 
 	sealed class StoreType<T : Any>(val serialiser: (T) -> String, val deserialiser: (String) -> T)
 	object BoolStoreType : StoreType<Boolean>({ it.toString() }, { it.toBoolean() })
-	object IntStoreType : StoreType<Int>({ it.toString() }, { it.toInt() })
-	object StringStoreType : StoreType<String>({ it }, { it })
-	object SnowflakeStoreType : StoreType<Snowflake>({ it.toString() }, { Snowflake(it) })
+	object GameToChannelPairListStoreType : StoreType<Map<String, Snowflake>>(
+		{ map ->
+			if (map.isEmpty())
+				""
+			else
+				map.entries.sortedBy { it.key }.joinToString(separator = ",") { "${it.key}:${it.value}" }
+		},
+		{ mapString ->
+			if (mapString.isBlank())
+				emptyMap()
+			else
+				mapString.split(',')
+					.associate { v -> v.splitOn { it == ':' }.let { it.first to Snowflake(it.second) } }
+		}
+	)
 
 	private fun readStore() {
 		log.debug { "Reading store..." }

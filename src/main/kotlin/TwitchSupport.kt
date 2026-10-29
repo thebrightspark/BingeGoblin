@@ -19,11 +19,9 @@ import io.ktor.http.*
 import io.ktor.serialization.jackson.*
 import kotlin.time.Clock
 import kotlin.time.Duration.Companion.seconds
-import kotlin.time.ExperimentalTime
 import kotlin.time.Instant
 import kotlin.time.measureTimedValue
 
-@OptIn(ExperimentalTime::class)
 object TwitchSupport {
 	private val log = KotlinLogging.logger {}
 	private val httpClient = HttpClient(CIO) {
@@ -73,10 +71,11 @@ object TwitchSupport {
 	}
 
 	@Throws(Exception::class)
-	suspend fun getStreamsForGame(gameId: String): List<Stream> = getAll("getStreamsForGame") { paginationCursor ->
-		twitchClient.getStreams(getToken(), paginationCursor, null, 100, listOf(gameId), null, null, null).execute()
-			.let { ResultsContainer(it.streams, it.pagination) }
-	}
+	suspend fun getStreamsForGames(gameIds: Collection<String>): List<Stream> =
+		getAll("getStreamsForGame") { paginationCursor ->
+			twitchClient.getStreams(getToken(), paginationCursor, null, 100, gameIds.toList(), null, null, null)
+				.execute().let { ResultsContainer(it.streams, it.pagination) }
+		}
 
 	private suspend fun <T> getAll(
 		name: String,

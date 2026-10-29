@@ -1,0 +1,34 @@
+command:
+  enabled:
+    name: enabled
+    desc: Enabled or disable the polling and posting of Twitch streams
+    arg:
+      enabled:
+        name: enabled
+        desc: True or false
+  add-game:
+    name: add-game
+    desc: Adds a game to search streams for and sends them to the given channel
+    arg:
+      game-name:
+        name: game-name
+        desc: The name of the game
+      channel:
+        name: channel
+        desc: The channel
+  remove-game:
+    name: remove-game
+    desc: Removes a game to search streams for
+  clear-games:
+    name: clear-games
+    desc: Removes all games
+  poll-streams:
+    name: poll-streams
+    desc: Poll streams
+
+converter:
+  game-id: game
+
+error:
+  bot:
+    permission: Missing permission{0, plural, one {} other {s}} {1}!
